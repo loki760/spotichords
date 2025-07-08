@@ -1,0 +1,42 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+
+# Virtual environment
+venv/
+env/
+
+# Environment variables / secrets
+.env
+
+# IDE / Editor folders
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Logs & databases (if any)
+*.log
+*.sqlite3
+*.db
+
+# Compiled files / Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Static assets you don't want to track (optional)
+static/**/*.tmp
+static/**/*.cache
+
+# Jupyter Notebooks (if you ever use them)
+.ipynb_checkpoints/
+
+# Uvicorn logs (optional)
+*.pid
+*.sock
