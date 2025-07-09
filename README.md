@@ -8,7 +8,7 @@ This is a web application that allows users to log in with their Spotify account
 - Login with Spotify (OAuth 2.0)
 - Fetch Spotify playlists
 - Search for chords of any song manually
-- Scrape chords from e-chords.com and display them on the web page
+- Scrape chords from ultimate guitar and display them on the web page
 - Save scraped chords easily for personal use
 
 ## Tech Stack
