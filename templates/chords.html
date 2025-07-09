@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chords for {{ song }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Chords for {{ song }}</h1>
-    <pre>{{ chords }}</pre>
-    <a href="/">Back</a>
+<body class="bg-gray-900 text-white flex flex-col items-center min-h-screen py-8">
+    <div class="text-center p-8">
+        <h1 class="text-4xl font-bold mb-8">Chords for <span class="text-green-400">{{ song }}</span></h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for song, song_chords in chords.items() %}
+            <div class="bg-gray-800 rounded-lg p-6 text-left">
+                <h2 class="text-2xl font-bold text-green-400 mb-4">{{ song }}</h2>
+                <pre class="text-gray-300 whitespace-pre-wrap">{{ song_chords }}</pre>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="/" class="mt-8 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out">Back to Search</a>
+    </div>
 </body>
 </html>

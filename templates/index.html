@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Chord Scraper</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Welcome to Spotify Chord Scraper</h1>
-    <a href="/login">Login with Spotify</a>
-    <h2>Or Search for Chords Manually</h2>
-    <form method="post" action="/scrape">
-        <input type="text" name="song" placeholder="Song name and artist" required>
-        <button type="submit">Get Chords</button>
-    </form>
+<body class="bg-gray-900 text-white flex flex-col items-center justify-center min-h-screen">
+    <div class="text-center p-8">
+        <h1 class="text-5xl font-bold mb-4">Spotify Chord Scraper</h1>
+        <p class="text-lg text-gray-400 mb-8">Get chords for any song, either by logging into Spotify or searching manually.</p>
+        <a href="/login" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out">Login with Spotify</a>
+    </div>
+    <div class="w-full max-w-md p-8">
+        <h2 class="text-2xl font-bold text-center mb-4">Or Search for Chords Manually</h2>
+        <form method="post" action="/scrape" class="flex flex-col gap-4">
+            <input type="text" name="song" placeholder="Song name and artist" required class="bg-gray-800 border border-gray-700 text-white rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-green-500">
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out">Get Chords</button>
+        </form>
+    </div>
 </body>
 </html>

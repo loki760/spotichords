@@ -61,7 +61,7 @@ def login():
 
 # Route: Spotify OAuth Callback (GET Request)
 @app.get("/callback")
-def callback(code: str):
+def callback(request: Request, code: str):
     """
     Handles the callback from Spotify after the user has logged in.
     """
@@ -78,9 +78,37 @@ def callback(code: str):
     sp = spotipy.Spotify(auth=token_info['access_token'])
     # Fetch the current user's playlists
     playlists = sp.current_user_playlists()['items']
-    # Return the list of playlists as a JSON response
-    # In a real application, you would likely render a template with this data
-    return {"playlists": playlists}
+    # Render the playlists.html template, passing the playlists data
+    return templates.TemplateResponse("playlists.html", {"request": request, "playlists": playlists})
+
+# Route: Get Chords for a Playlist (POST Request)
+@app.post("/get_chords", response_class=HTMLResponse)
+def get_chords(request: Request, playlist_id: str = Form(...)):
+    """
+    Fetches tracks from a selected playlist and scrapes their chords.
+    """
+    # Initialize the Spotify API client (ideally, you'd reuse the authenticated client)
+    # For simplicity, we re-authenticate here. In a real app, you'd store the token.
+    sp_oauth = SpotifyOAuth(
+        client_id=os.getenv("SPOTIPY_CLIENT_ID"),
+        client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
+        redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
+        scope="playlist-read-private"
+    )
+    # A bit of a hack: we need a valid token to make a client.
+    # Since we don't have the user's token from the callback,
+    # we'll use a client credentials flow for this public playlist data.
+    # Note: This won't work for private playlists.
+    from spotipy.client import SpotifyCredentials
+    client_credentials_manager = SpotifyCredentials(client_id=os.getenv("SPOTIPY_CLIENT_ID"), client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"))
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+
+    # Fetch the tracks from the selected playlist
+    tracks = fetch_playlist_tracks(sp, playlist_id)
+    # Scrape the chords for each track
+    chords_data = {track: scrape_chords(track) for track in tracks}
+    # Render the chords.html template, passing the song and chords data
+    return templates.TemplateResponse("chords.html", {"request": request, "song": "Playlist Chords", "chords": chords_data})
 
 
 # Route: Manual Chord Scraper (POST Request)
