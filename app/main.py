@@ -39,19 +39,23 @@ def index(request: Request):
     # Renders the index.html template
     return templates.TemplateResponse("index.html", {"request": request})
 
-
+os.environ["SPOTIPY_REDIRECT_URI"] = "http://127.0.0.1:8000/callback"
 # Route: Spotify Login (GET Request)
 @app.get("/login")
 def login():
     """
     Redirects the user to the Spotify login page for authentication.
     """
+
+    print("=== DEBUGGING REDIRECT URI ===")
+    print(f"Using redirect URI: {os.getenv('SPOTIPY_REDIRECT_URI')}")
     # Initialize the Spotify OAuth flow with credentials from environment variables
     sp_oauth = SpotifyOAuth(
         client_id=os.getenv("SPOTIPY_CLIENT_ID"),
         client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
         redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
-        scope="playlist-read-private"  # This scope allows reading the user's private playlists
+        scope="playlist-read-private",  # This scope allows reading the user's private playlists
+        show_dialog=True
     )
     # Get the Spotify authorization URL
     auth_url = sp_oauth.get_authorize_url()
@@ -61,25 +65,30 @@ def login():
 
 # Route: Spotify OAuth Callback (GET Request)
 @app.get("/callback")
-def callback(request: Request, code: str):
-    """
-    Handles the callback from Spotify after the user has logged in.
-    """
-    # Complete the Spotify OAuth flow using the authorization code from the callback
-    sp_oauth = SpotifyOAuth(
-        client_id=os.getenv("SPOTIPY_CLIENT_ID"),
-        client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
-        redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI"),
-        scope="playlist-read-private"
-    )
-    # Exchange the authorization code for an access token
-    token_info = sp_oauth.get_access_token(code)
-    # Initialize the Spotify API client with the obtained access token
-    sp = spotipy.Spotify(auth=token_info['access_token'])
-    # Fetch the current user's playlists
-    playlists = sp.current_user_playlists()['items']
-    # Render the playlists.html template, passing the playlists data
-    return templates.TemplateResponse("playlists.html", {"request": request, "playlists": playlists})
+def callback(request: Request, code: str = None, error: str = None):
+    if error:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": f"Spotify authentication failed: {error}"
+        })
+    
+    if not code:
+        return RedirectResponse("/")
+        
+    try:
+        sp_oauth = SpotifyOAuth(
+            client_id=os.getenv("SPOTIPY_CLIENT_ID"),
+            client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"),
+            redirect_uri=os.getenv("SPOTIPY_REDIRECT_URI")
+        )
+        token_info = sp_oauth.get_access_token(code)
+        # Store token_info in session or database
+        # ... rest of your callback logic
+    except Exception as e:
+        return templates.TemplateResponse("error.html", {
+            "request": request,
+            "error": f"Authentication error: {str(e)}"
+        })
 
 # Route: Get Chords for a Playlist (POST Request)
 @app.post("/get_chords", response_class=HTMLResponse)
