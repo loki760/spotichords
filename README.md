@@ -1,7 +1,7 @@
 
 # Spotify Chord Scraper Web App
 
-This is a web application that allows users to log in with their Spotify account, fetch playlists, and scrape guitar chords for songs using web scraping from e-chords.com.
+This is a web application that allows users to log in with their Spotify account, fetch playlists, and scrape guitar chords for songs using web scraping from [ultimate guitar](https://www.ultimate-guitar.com/).
 
 ## Features
 
@@ -48,7 +48,7 @@ spotify-chord-scraper/
 1. **Clone the Repository**
 
 ```bash
-git clone https://github.com/yourusername/spotify-chord-scraper.git
+git clone https://github.com/loki760/spotify-chord-scraper.git
 cd spotify-chord-scraper
 ```
 
