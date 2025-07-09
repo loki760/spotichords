@@ -48,8 +48,8 @@ spotify-chord-scraper/
 1. **Clone the Repository**
 
 ```bash
-git clone https://github.com/loki760/spotify-chord-scraper.git
-cd spotify-chord-scraper
+git clone https://github.com/loki760/chordify.git
+cd chordify
 ```
 
 2. **Create a Virtual Environment and Install Dependencies**
