@@ -3,16 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chords for {{ song }}</title>
+    <title>Chords for {{ title }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chord {
+            color: #34D399; /* Same as text-green-400 */
+            font-weight: bold;
+        }
+        .lyric {
+            color: #D1D5DB; /* Same as text-gray-300 */
+        }
+    </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col items-center min-h-screen py-8">
-    <div class="text-center p-8">
-        <h1 class="text-4xl font-bold mb-8">Chords for <span class="text-green-400">{{ song }}</span></h1>
-        <div class="bg-gray-800 rounded-lg p-6 text-left max-w-3xl w-full">
-            <pre class="text-gray-300 whitespace-pre-wrap">{{ chords }}</pre>
+    <div class="text-center p-8 w-full">
+        <h1 class="text-4xl font-bold mb-8 text-green-400">{{ title }}</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
+            {% for song, song_chords in chords.items() %}
+            <div class="bg-gray-800 rounded-lg p-4 text-left w-full">
+                <pre class="text-gray-300 whitespace-pre-wrap text-sm" id="chords-{{ loop.index }}">{{ song_chords }}</pre>
+            </div>
+            {% endfor %}
         </div>
         <a href="/" class="mt-8 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full transition duration-300 ease-in-out">Back to Search</a>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const chordBlocks = document.querySelectorAll("pre[id^='chords-']");
+            chordBlocks.forEach(block => {
+                const rawText = block.textContent;
+                const lines = rawText.split('\n');
+                let formattedHtml = '';
+                lines.forEach(line => {
+                    line = line.replace(/\[tab\]/g, '');                                                                                                   
+                    line = line.replace(/\[\/tab\]/g, '');
+                    if (line.includes('[ch]')) {
+                        line = line.replace(/\[ch\]/g, '<span class="chord">');
+                        line = line.replace(/\[\/ch\]/g, '</span>');
+                        formattedHtml += `<div>${line}</div>`;
+                    } else {
+                        formattedHtml += `<div class="lyric">${line}</div>`;
+                    }
+                });
+                block.innerHTML = formattedHtml;
+            });
+        });
+    </script>
 </body>
 </html>

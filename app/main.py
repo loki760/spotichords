@@ -103,12 +103,16 @@ def get_chords(request: Request, playlist_id: str = Form(...)):
     client_credentials_manager = SpotifyCredentials(client_id=os.getenv("SPOTIPY_CLIENT_ID"), client_secret=os.getenv("SPOTIPY_CLIENT_SECRET"))
     sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
+    # Fetch the playlist details to get the name
+    playlist = sp.playlist(playlist_id)
+    playlist_name = playlist['name']
+
     # Fetch the tracks from the selected playlist
     tracks = fetch_playlist_tracks(sp, playlist_id)
     # Scrape the chords for each track
     chords_data = {track: scrape_chords(track) for track in tracks}
     # Render the chords.html template, passing the song and chords data
-    return templates.TemplateResponse("chords.html", {"request": request, "song": "Playlist Chords", "chords": chords_data})
+    return templates.TemplateResponse("chords.html", {"request": request, "title": playlist_name, "chords": chords_data})
 
 
 # Route: Manual Chord Scraper (POST Request)
@@ -119,5 +123,6 @@ def scrape(request: Request, song: str = Form(...)):
     """
     # Scrape the chords for the provided song name using the custom scraper function
     chords = scrape_chords(song)
+    chords_data = {song: chords}
     # Render the chords.html template, passing the song name and scraped chords
-    return templates.TemplateResponse("chords.html", {"request": request, "song": song, "chords": chords})
+    return templates.TemplateResponse("chords.html", {"request": request, "title": song, "chords": chords_data})
